@@ -301,6 +301,19 @@ module Nokogiri
           assert_equal(original.to_html, duplicate.to_html)
         end
 
+        def test_dup_creates_tree_with_identical_structure_stress
+          original = Nokogiri::XML::DocumentFragment.parse("<div><p>hello</p></div>")
+          duplicate = original.dup
+          stress_was = GC.stress
+          GC.stress = true
+          begin
+            duplicate.to_html
+          ensure
+            GC.stress = stress_was
+          end
+          assert_equal(original.to_html, duplicate.to_html)
+        end
+
         def test_dup_creates_mutable_tree
           original = Nokogiri::XML::DocumentFragment.parse("<div><p>hello</p></div>")
           duplicate = original.dup
